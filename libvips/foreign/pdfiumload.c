@@ -592,14 +592,10 @@ vips_foreign_load_pdf_generate( VipsRegion *or,
 			VIPS_REGION_ADDR( or, rect.left, rect.top ), 
 			VIPS_REGION_LSKIP( or ) );  
 
-		/* Only paint the background if there's no transparency.
-		 */
-		if ( !FPDFPage_HasTransparency( pdf->page ) ) {
-			FPDF_DWORD ink = *((guint32 *) pdf->ink);
-
-			FPDFBitmap_FillRect( bitmap,
-				0, 0, rect.width, rect.height, ink );
-		}
+		// Always fill background
+		FPDF_DWORD ink = *((guint32 *) pdf->ink);
+		FPDFBitmap_FillRect( bitmap,
+			0, 0, rect.width, rect.height, ink );
 
 		if (pdf->formType != 0) {
 			FPDFPage_Flatten(pdf->page, FLAT_PRINT);
