@@ -603,14 +603,10 @@ vips_foreign_load_pdf_generate(VipsRegion *out_region,
 			VIPS_REGION_ADDR(out_region, rect.left, rect.top),
 			VIPS_REGION_LSKIP(out_region));
 
-		/* Only paint the background if there's no transparency.
-		 */
-		if (!FPDFPage_HasTransparency(pdf->page)) {
-			FPDF_DWORD ink = *((guint32 *) pdf->ink);
+		FPDF_DWORD ink = *((guint32 *) pdf->ink);
 
-			FPDFBitmap_FillRect(bitmap,
-				0, 0, rect.width, rect.height, ink);
-		}
+		FPDFBitmap_FillRect(bitmap,
+			0, 0, rect.width, rect.height, ink);
 
 		FPDF_RenderPageBitmap(bitmap, pdf->page,
 			pdf->pages[i].left - rect.left,
