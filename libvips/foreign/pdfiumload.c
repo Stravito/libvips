@@ -283,16 +283,9 @@ vips_foreign_load_pdf_build(VipsObject *object)
 
 	/* pdfium must know the file length, unfortunately.
 	 */
-	if (pdf->source) {
-		if ((length = vips_source_length(pdf->source)) <= 0)
-			return -1;
-		if (length > 1 << 30) {
-			vips_error(class->nickname,
-				_("%s: too large for pdfium"),
-				vips_connection_nick(
-					VIPS_CONNECTION(pdf->source)));
-			return -1;
-		}
+	if( pdf->source ) {
+		if( (length = vips_source_length( pdf->source )) <= 0 )
+			return( -1 );
 		pdf->file_access.m_FileLen = length;
 		pdf->file_access.m_GetBlock = vips_pdfium_GetBlock;
 		pdf->file_access.m_Param = pdf;
