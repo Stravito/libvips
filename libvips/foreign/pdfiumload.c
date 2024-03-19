@@ -107,8 +107,6 @@ EOF
 #include <fpdfview.h>
 #include <fpdf_doc.h>
 #include <fpdf_edit.h>
-#include <fpdf_flatten.h>
-#include <fpdf_formfill.h>
 
 #define TILE_SIZE (4000)
 
@@ -161,8 +159,6 @@ typedef struct _VipsForeignLoadPdf {
 	/* The [double] background converted to image format.
 	 */
 	VipsPel *ink;
-
-	int formType;
 
 } VipsForeignLoadPdf;
 
@@ -299,8 +295,6 @@ vips_foreign_load_pdf_build( VipsObject *object )
 					VIPS_CONNECTION( pdf->source ) ) );
 			return( -1 ); 
 		}
-
-		pdf->formType = FPDF_GetFormType(pdf->doc);
 
 		g_mutex_unlock( vips_pdfium_mutex );
 	}
@@ -589,12 +583,6 @@ vips_foreign_load_pdf_generate( VipsRegion *or,
 		FPDF_DWORD ink = *((guint32 *) pdf->ink);
 		FPDFBitmap_FillRect( bitmap,
 			0, 0, rect.width, rect.height, ink );
-
-		if (pdf->formType != 0) {
-			FPDFPage_Flatten(pdf->page, FLAT_PRINT);
-			FPDF_ClosePage(pdf->page);
-			pdf->page = FPDF_LoadPage( pdf->doc, pdf->page_no );
-		}
 
 		FPDF_RenderPageBitmap( bitmap, pdf->page,
 			pdf->pages[i].left - rect.left,
