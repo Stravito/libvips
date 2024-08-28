@@ -224,34 +224,22 @@ vips_pdfium_init_cb(void *dummy)
 {
 	FPDF_LIBRARY_CONFIG config;
 
-	const char* custom_fonts_dir_env_name = "CUSTOM_FONTS_PATH";
-	const char* custom_fonts_dir_env_value = getenv(custom_fonts_dir_env_name);
+	const char* custom_font_shared_path_env_name = "CUSTOM_FONT_SHARED_PATH";
+	const char* custom_font_tenant_path_env_name = "CUSTOM_FONT_TENANT_PATH";
 
-	if (custom_fonts_dir_env_value != NULL)
-	{
-		char buf[strlen(custom_fonts_dir_env_value) + 1];
-		strcpy(buf, custom_fonts_dir_env_value);
+	const char* custom_font_shared_path_env_value = getenv(custom_font_shared_path_env_name);
+	const char* custom_font_tenant_path_env_value = getenv(custom_font_tenant_path_env_name);
 
-		int index = 0;
-		char *saveptr;
-		char *token = strtok_r(buf, ":", &saveptr);
-		char *custom_font_paths[5];
-
-		while (token != NULL && index < 4)
-		{
-			custom_font_paths[index++] = token;
-			token = strtok_r(NULL, ":", &saveptr);
-		}
-
-		custom_font_paths[index] = NULL;
-		config.m_pUserFontPaths = custom_font_paths;
-	} else {
-		config.m_pUserFontPaths = NULL;
-	}
+	char *custom_font_paths[3] = {
+		custom_font_shared_path_env_value,
+		custom_font_tenant_path_env_value,
+		NULL
+	};
 
 	config.version = 2;
 	config.m_pIsolate = NULL;
 	config.m_v8EmbedderSlot = 0;
+	config.m_pUserFontPaths = custom_font_paths;
 
 	FPDF_InitLibraryWithConfig(&config);
 
